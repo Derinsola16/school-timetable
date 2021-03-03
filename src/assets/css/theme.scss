@@ -1,0 +1,31 @@
+// Scss imports
+// Fonts import
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+
+@font-face {
+    font-family: 'Yu Gothic';
+    src: url(../fonts/yugothib.ttf);
+}
+
+// Define variable defaults
+$body-bg: #000;
+$body-color: #111;
+
+
+body {
+    font-family: 'Yu Gothic';
+    font-size: 16px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bungee', cursive !important;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 10px;
+    font-size: .8rem;
+    padding: 9px 35px;
+} 

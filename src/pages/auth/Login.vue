@@ -66,7 +66,7 @@ export default {
         this.user.email === this.email &&
         this.user.password === this.password
       ) {
-        this.$router.push("/dashboard");
+        this.$router.push("/admin/department");
       } else {
         alert("Wrong Login Details");
       }

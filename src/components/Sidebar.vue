@@ -6,10 +6,10 @@
       </div>
       <div>
         <router-link
-          to="/admin"
+          to="department"
           class="py-3 text-white d-flex px-4 mb-1 text-decoration-none"
           :class="{
-            active: currentRoute == 'Timetable',
+            active: currentRoute == 'Department',
           }"
         >
           <i class="fas fa-table me-3"></i>
@@ -17,7 +17,7 @@
         </router-link>
 
         <router-link
-          to="/lecturer"
+          to="lecturer"
           class="py-3 text-light d-flex px-4 mb-1 text-decoration-none"
           :class="{
             active: currentRoute == 'Lecturer',
@@ -28,7 +28,7 @@
         </router-link>
 
         <router-link
-          to="/student"
+          to="student"
           class="py-3 text-light d-flex px-4 mb-1 text-decoration-none"
           :class="{
             active: currentRoute == 'Student',
@@ -39,7 +39,7 @@
         </router-link>
 
         <router-link
-          to="/course"
+          to="course"
           class="py-3 text-light d-flex px-4 mb-1 text-decoration-none"
           :class="{
             active: currentRoute == 'Course',
@@ -50,7 +50,7 @@
         </router-link>
 
         <router-link
-          to="/todo"
+          to="todo"
           class="py-3 text-light d-flex px-4 mb-1 text-decoration-none"
           :class="{
             active: currentRoute == 'Todo',

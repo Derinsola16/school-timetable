@@ -37,27 +37,27 @@ export default new VueRouter({
             component: DashboardView,
             children: [
                 {
-                    path: '',
+                    path: 'department',
                     name: 'Department',
                     component: Department,
                 },
                 {
-                    path: '/lecturer',
+                    path: 'lecturer',
                     name: 'Lecturer',
                     component: Lecturer
                 },
                 {
-                    path: '/student',
+                    path: 'student',
                     name: 'Student',
                     component: Student
                 },
                 {
-                    path: '/course',
+                    path: 'course',
                     name: 'Course',
                     component: Course
                 },
                 {
-                    path: '/todo',
+                    path: 'todo',
                     name: 'Todo',
                     component: Todo
                 }

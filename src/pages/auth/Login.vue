@@ -48,12 +48,11 @@
 </template>
 
 <script>
+import customAxios from '../../helpers/axios';
 export default {
   name: "Login",
   data() {
     return {
-      email: "user@gmail.com",
-      password: "123456789",
       user: {
         email: "",
         password: "",
@@ -61,16 +60,46 @@ export default {
     };
   },
   methods: {
-    login() {
+    async login() {
       if (
-        this.user.email === this.email &&
-        this.user.password === this.password
+        this.user.email&&
+        this.user.password
       ) {
-        this.$router.push("/admin/department");
+        await customAxios.post('/auth/login', {
+          email: this.user.email,
+          password: this.user.password,
+        }).then((response) => {
+
+          if (Object.keys(response.data.user).length !== 0) {
+            const token = response.data.token;
+            const loggedInUser = response.data.user;
+            console.log(loggedInUser);
+            console.log(token);
+            // save the user to the window session
+            // save the token, somewhere, anywhere but localstorage
+            this._determineLoginRoute(loggedInUser.role);
+          }
+        })
+        
       } else {
         alert("Wrong Login Details");
       }
     },
+    _determineLoginRoute: function(role) {
+      switch (role) {
+        case 'administrator':
+          this.$router.push("/admin/department");
+          break;
+        case 'lecturer':
+          this.$router.push('/');
+          break;
+        case 'student':
+          this.$router.push('/');
+          break;
+        default:
+          break;
+      }
+    }
   },
 };
 </script>

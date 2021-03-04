@@ -5,12 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
 import router from './router'
-
+import axios from 'axios'
 import '@/assets/css/app.scss'
 import vuetify from './plugins/vuetify';
 
 
-
+window.axios = axios
 Vue.config.productionTip = false
 
 new Vue({

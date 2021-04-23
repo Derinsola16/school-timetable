@@ -1,75 +1,31 @@
 <template>
   <main class="position-sticky top-0 highlight head">
-    <div class="border-bottom">
+    <div class="border-bottom border-warning border-2">
       <div class="d-flex justify-content-between p-3">
-        <div class="d-flex">
-          <i class="fas fa-search mt-2 text-muted"></i>
-          <input
-            style="width: 240px; background: transparent"
-            type="text"
-            class="form-control border-0"
-            id="search"
-            placeholder="Search therapist"
-          />
-        </div>
-        <img
-          src="../assets/profile-pic.jpeg"
-          width="36"
-          height="36"
-          class="float-end rounded-circle"
-        />
+          <h2 class="text-white">{{currentRoute}}</h2>
+          <div class="text-white">
+            <p class="">Hello, {{name.name }}</p>
+          <strong class="text-uppercase">{{name.role}}</strong>
+          </div>
       </div>
     </div>
-    <!-- <div class="px-3">
-     <div class="d-flex justify-content-between border-bottom p-3">
-        <span class="mt-2">{{ currentPage }}</span>
-      <button
-        type="button"
-        class="btn btn-primary"
-        v-if="currentRoute !== 'User'"
-        @click="showForm"
-      >
-        Invite Therapist
-      </button>
-     </div>
-    </div> -->
-
-    <!-- <div class="d-flex justify-content-between">
-        <div>
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-              <li class="breadcrumb-item">
-                <a href="#" class="text-decoration-none"><small>Therapist</small></a>
-              </li>
-              <li class="breadcrumb-item active" aria-current="page">
-                <small>Invite Therapist</small>
-              </li>
-            </ol>
-          </nav>
-          <p class="m-0">Invite Therapist</p>
-        </div>
-      </div> -->
   </main>
 </template>
 
 <script>
 export default {
   data() {
-    return {};
+    return {
+      name: JSON.parse(sessionStorage.getItem('user')),
+    };
   },
   computed: {
     currentRoute() {
       return this.$route.name;
-    },
-    currentPage() {
-      return this.$route.name;
-    },
-  },
-  methods: {
-    showForm() {
-       document.getElementById("panel").style.display = "block";
-      
     }
+  },
+  mounted() {
+    console.log(this.name)
   }
 };
 </script>

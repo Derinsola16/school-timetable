@@ -2,7 +2,7 @@
   <nav>
     <div class="highlight position-sticky top-0" style="width:256px; height: 100vh">
       <div class="text-center p-5">
-        <img src="../assets/Pow-logo.svg" alt="" class="" />
+        <img src="../assets/image.png" alt="" class="" width="100" />
       </div>
       <div>
         <router-link

@@ -7,8 +7,8 @@
         class="border rounded-3 p-4"
         style="width: 457px;"
       >
-        <div class="p-3">
-          <img src="../../assets/Pow-logo.svg" alt="" />
+        <div class="p-3 text-center">
+          <img src="../../assets/image.png" alt="" width="100" />
           <p class="fs-4 text-dark">Sign In</p>
         </div>
         <div class="p-3">
@@ -73,16 +73,19 @@ export default {
           if (Object.keys(response.data.user).length !== 0) {
             const token = response.data.token;
             const loggedInUser = response.data.user;
-            console.log(loggedInUser);
-            console.log(token);
             // save the user to the window session
-            // save the token, somewhere, anywhere but localstorage
+            sessionStorage.setItem('user', JSON.stringify(loggedInUser));
+            sessionStorage.setItem('token', token);
             this._determineLoginRoute(loggedInUser.role);
           }
+          this.$toast.success("Login Successfully")
+        }).catch((error) => {
+          console.log(error)
+          this.$toast.error("Wrong Login Details");
         })
         
       } else {
-        alert("Wrong Login Details");
+        this.$toast.error("Fields cannot be empty");
       }
     },
     _determineLoginRoute: function(role) {

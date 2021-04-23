@@ -1,9 +1,9 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="desserts"
-    sort-by="calories"
-    class="elevation-4 mb-15"
+    :items="course"
+    sort-by="name"
+    class="elevation-4 mb-15 text-capitalize"
     dark
   >
     <template v-slot:top>
@@ -25,45 +25,61 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.CourseName"
+                      v-model="editedItem.name"
                       label="Course Name"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.CourseCode"
+                      v-model="editedItem.code"
                       label="CourseCode"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.Department"
+                      v-model="editedItem.section"
+                      label="CourseCode"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      v-model="editedItem.semester"
+                      label="CourseCode"
+                    ></v-text-field>
+                  </v-col>
+                 <v-col cols="12" sm="6">
+                    <v-select
+                      v-model="editedItem.department"
+                      :items="department"
                       label="Department"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.Lecturer"
+                      dense
+                    ></v-select>
+                 </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-select
+                      v-model="editedItem.lecturer"
+                      :items="lecturer"
                       label="Lecturer"
-                    ></v-text-field>
+                      dense
+                    ></v-select>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.StartTime"
+                      v-model="editedItem.startTime"
                       label="StartTime"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.EndTime"
+                      v-model="editedItem.endTime"
                       label="EndTime"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.Day"
+                      v-model="editedItem.day"
                       label="Day"
                     ></v-text-field>
                   </v-col>
@@ -117,40 +133,48 @@ export default {
     dialog: false,
     dialogDelete: false,
     headers: [
-      { text: "CourseName", value: "CourseName", align: "start" },
-      { text: "CourseCode", value: "CourseCode" },
-      { text: "Department", value: "Department" },
-      { text: "Lecturer", value: "Lecturer" },
-      { text: "StartTime", value: "StartTime" },
-      { text: "EndTime", value: "EndTime" },
-      { text: "Day", value: "Day" },
+      { text: "Name", value: "name", align: "start" },
+      { text: "Code", value: "code" },
+      { text: "Section", value: "section" },
+      { text: "Semester", value: "semester" },
+      { text: "Department", value: "department" },
+      { text: "Lecturer", value: "lecturer" },
+      { text: "StartTime", value: "startTime" },
+      { text: "EndTime", value: "endTime" },
+      { text: "Day", value: "day" },
       { text: "Action", value: "actions", sortable: false },
     ],
-    desserts: [],
+    course: [],
+    lecturer: [],
+    department: [],
     editedIndex: -1,
     editedItem: {
-      CourseCode: 0,
-      CourseName: "",
-      Department: "",
-      Lecturer: "",
-      StartTime: "",
-      EndTime: "",
-      Day: "",
+      code: "",
+      name: "",
+      section: "",
+      semester: "",
+      department: "",
+      lecturer: "",
+      startTime: "",
+      endTime: "",
+      day: "",
     },
     defaultItem: {
-      CourseCode: 0,
-      CourseName: "",
-      Department: "",
-      Lecturer: "",
-      StartTime: "",
-      EndTime: "",
-      Day: "",
+      code: "",
+      name: "",
+      section: "",
+      semester: "",
+      department: "",
+      lecturer: "",
+      startTime: "",
+      endTime: "",
+      day: "",
     },
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "Create New Course" : "Edit Course";
     },
   },
 
@@ -169,33 +193,35 @@ export default {
 
   methods: {
     initialize() {
-      this.desserts = [
+      this.course = [
         {
-          CourseCode: 1022,
-          CourseName: "Web App",
-          Department: "Computer Science",
-          Lecturer: "Andrew",
-          StartTime: '13:00',
-          EndTime: "17:00",
-          Day: "Wednesday",
+          code: 1022,
+          name: "Web App",
+          section: 3,
+          semester: 4,
+          department: "Computer Science",
+          lecturer: "Andrew",
+          startTime: '13:00',
+          endTime: "17:00",
+          day: "Wednesday",
         },
       ];
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.course.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.course.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
+      this.course.splice(this.editedIndex, 1);
       this.closeDelete();
     },
 
@@ -217,9 +243,9 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        Object.assign(this.course[this.editedIndex], this.editedItem);
       } else {
-        this.desserts.push(this.editedItem);
+        this.course.push(this.editedItem);
       }
       this.close();
     },

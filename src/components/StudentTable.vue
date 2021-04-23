@@ -1,10 +1,10 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="desserts"
+    :items="student"
     :search="search"
-    sort-by="calories"
-    class="elevation-4"
+    sort-by="name"
+    class="elevation-4 text-capitalize"
     dark
   >
     <template v-slot:top>
@@ -13,13 +13,13 @@
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+        <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn dark class="mb-2" v-bind="attrs" v-on="on">
@@ -36,29 +36,65 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.name"
                       label="Name"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.email"
                       label="Email"
+                      :rules="emailRules"
+                      required
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.role"
-                      label="Role"
+                      v-model="editedItem.phone"
+                      label="Phone Number"
+                      required
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.matric"
-                      label="Matric"
+                      v-model="editedItem.password"
+                      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                      :rules="[rules.required, rules.min]"
+                      :type="show1 ? 'text' : 'password'"
+                      name="input-10-1"
+                      label="Passsword"
+                      hint="At least 8 characters"
+                      counter
+                      @click:append="show1 = !show1"
                     ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      v-model="editedItem.section"
+                      label="Section"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      v-model="editedItem.semester"
+                      label="Semester"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      v-model="editedItem.studentNumber"
+                      label="StudentNumber"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-select
+                      v-model="editedItem.department"
+                      :items="department"
+                      label="Department"
+                      dense
+                    ></v-select>
                   </v-col>
                 </v-row>
               </v-container>
@@ -113,37 +149,58 @@
 </template>
 
 <script>
+import customAxios from "../helpers/axios";
 export default {
   data: () => ({
-    search: '',
+    show1: false,
+    search: "",
     dialog: false,
     dialogDelete: false,
+    rules: {
+      required: (value) => !!value || "Required.",
+      min: (v) => v.length >= 8 || "Min 8 characters",
+    },
+    emailRules: [
+      (v) => !!v || "E-mail is required",
+      (v) => /.+@.+/.test(v) || "E-mail must be valid",
+    ],
     headers: [
-      { text: "Name", value: "name", align: "start", },
+      { text: "Name", value: "name", align: "start" },
       { text: "Role", value: "role" },
       { text: "Email", value: "email" },
-      { text: "Matric Number", value: "matric" },
+      { text: "Phone Number", value: "phone" },
+      { text: "Matric Number", value: "studentNumber" },
+      { text: "Year", value: "section" },
+      { text: "Semester", value: "semester" },
+      { text: "Department", value: "department.name" },
       { text: "Action", value: "actions", sortable: false },
     ],
-    desserts: [],
+    department: [],
+    depat: [],
+    student: [],
     editedIndex: -1,
     editedItem: {
       name: "",
-      role: "",
       email: "",
-      matric: 0,
+      studentNumber: "",
+      department: "",
+      section: "",
+      semester: "",
     },
     defaultItem: {
       name: "",
-      role: "",
       email: "",
-      matric: 0,
+      studentNumber: "",
+      department: "",
+      section: "",
+      semester: "",
     },
+    token: sessionStorage.getItem("token"),
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "Create new student" : "Edit Student";
     },
   },
 
@@ -156,58 +213,72 @@ export default {
     },
   },
 
-  created() {
+  async created() {
     this.initialize();
+    await customAxios
+      .get("/admin/departments", {
+        headers: {
+          AUTHORIZATION: "Bearer " + this.token,
+        },
+      })
+      .then((response) => {
+        for (const x of response.data.data) {
+          // let data =  JSON.stringify(x)
+          this.department.push(x);
+        }
+      })
+      .catch((error) => {
+        // handle error
+        console.log(error);
+      });
   },
 
   methods: {
-    initialize() {
-      this.desserts = [
-        {
-          number: 1,
-          name: "KitKat",
-          role: "Student",
-          email: "dfkrnfkcm",
-          matric: 5546633,
-        },
-        {
-          number: 1,
-          name: "KitKat",
-          role: "Student",
-          email: "dfkrnfkcm",
-          matric: 5546633,
-        },
-        {
-          number: 1,
-          name: "KitKat",
-          role: "Student",
-          email: "dfkrnfkcm",
-          matric: 5546633,
-        },
-        {
-          number: 1,
-          name: "KitKat",
-          role: "Student",
-          email: "dfkrnfkcm",
-          matric: 5546633,
-        },
-      ];
+    async initialize() {
+      await customAxios
+        .get("/admin/students", {
+          headers: {
+            AUTHORIZATION: "Bearer " + this.token,
+          },
+        })
+        .then((response) => {
+          this.student = response.data.data;
+        })
+        .catch((error) => {
+          // handle error
+          console.log(error);
+        });
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.student.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.student.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
+    async deleteItemConfirm() {
+      let id = this.editedItem.id
+      await customAxios
+        .delete(`/admin/students/${id}`,
+        {
+          headers: {
+            AUTHORIZATION:  "Bearer " + this.token,
+          },
+        }).then(() => {
+          this.$toast.success("Successfully deleted :)");
+          this.initialize()
+        })
+        .catch((error) => {
+          // handle error
+          console.log(error);
+          this.$toast.error("Something went wrong :(")
+        });
       this.closeDelete();
     },
 
@@ -227,11 +298,61 @@ export default {
       });
     },
 
-    save() {
+    async save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        const id = this.editedItem.id;
+        const data = {
+          password_confirmation: this.editedItem.password,
+          name: this.editedItem.name,
+          email: this.editedItem.email,
+          password: this.editedItem.password,
+          phone: this.editedItem.phone,
+          studentNumber: this.editedItem.studentNumber,
+          section: this.editedItem.section,
+          semester: this.editedItem.semester,
+          department: this.editedItem.department.id,
+        };
+        await customAxios.put(`/admin/students/${id}`, data, {
+          headers: {
+            AUTHORIZATION: "Bearer " + this.token,
+          },
+        }).then(() => {
+            this.$toast.success("Successfully created");
+            this.initialize();
+          })
+          .catch((error) => {
+            // handle error
+            this.$toast.error("Something went wrong :( Please check again");
+            console.log(error);
+          });
       } else {
-        this.desserts.push(this.editedItem);
+        const data = {
+          password_confirmation: this.editedItem.password,
+          name: this.editedItem.name,
+          email: this.editedItem.email,
+          password: this.editedItem.password,
+          phone: this.editedItem.phone,
+          studentNumber: this.editedItem.studentNumber,
+          section: this.editedItem.section,
+          semester: this.editedItem.semester,
+          department: this.editedItem.department.id,
+        };
+        await customAxios
+          .post("/admin/students/create", data, {
+            headers: {
+              AUTHORIZATION: "Bearer " + this.token,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            this.$toast.success("Successfully created");
+            this.initialize();
+          })
+          .catch((error) => {
+            // handle error
+            this.$toast.error("Something went wrong :( Check again");
+            console.log(error);
+          });
       }
       this.close();
     },

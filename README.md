@@ -1,4 +1,4 @@
-# Official web app for superpow project
+# Official web app for automated timetable project
 
 ## Project setup
 ```

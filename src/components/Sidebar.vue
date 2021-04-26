@@ -59,6 +59,17 @@
           <i class="fas fa-list-ul me-3"></i>
           <p class="m-0">Todo</p>
         </router-link>
+
+        <router-link
+          to="timetable"
+          class="py-3 text-light d-flex px-4 mb-1 text-decoration-none"
+          :class="{
+            active: currentRoute == 'Timetable',
+          }"
+        >
+          <i class="fas fa-list-ul me-3"></i>
+          <p class="m-0">Timetable</p>
+        </router-link>
         
       </div>
     </div>

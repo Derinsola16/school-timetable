@@ -4,7 +4,7 @@
     :items="lecturer"
     :search="search"
     sort-by="name"
-    class="elevation-4 mb-15 text-capitalize"
+    class="elevation-4 mb-15 text-capitalize letter"
     dark
   >
     <template v-slot:top>

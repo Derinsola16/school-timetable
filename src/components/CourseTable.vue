@@ -2,8 +2,9 @@
   <v-data-table
     :headers="headers"
     :items="course"
+    :search="search"
     sort-by="name"
-    class="elevation-4 mb-15 text-capitalize"
+    class="elevation-4 mb-15 text-capitalize letter"
     dark
   >
     <template v-slot:top>
@@ -11,10 +12,18 @@
         <v-toolbar-title>Create Course</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+        <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn  dark class="mb-2" v-bind="attrs" v-on="on">
-              New Item
+              Create Course
             </v-btn>
           </template>
           <v-card>
@@ -40,13 +49,13 @@
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.section"
-                      label="CourseCode"
+                      label="Section"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.semester"
-                      label="CourseCode"
+                      label="Semester"
                     ></v-text-field>
                   </v-col>
                  <v-col cols="12" sm="6">
@@ -67,13 +76,13 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.startTime"
+                      v-model="editedItem.start"
                       label="StartTime"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="editedItem.endTime"
+                      v-model="editedItem.end"
                       label="EndTime"
                     ></v-text-field>
                   </v-col>
@@ -128,19 +137,21 @@
 </template>
 
 <script>
+import customAxios from "../helpers/axios";
 export default {
   data: () => ({
     dialog: false,
+    search: "",
     dialogDelete: false,
     headers: [
       { text: "Name", value: "name", align: "start" },
       { text: "Code", value: "code" },
       { text: "Section", value: "section" },
       { text: "Semester", value: "semester" },
-      { text: "Department", value: "department" },
-      { text: "Lecturer", value: "lecturer" },
-      { text: "StartTime", value: "startTime" },
-      { text: "EndTime", value: "endTime" },
+      { text: "Department", value: "department.name" },
+      { text: "Lecturer", value: "lecturer.name" },
+      { text: "StartTime", value: "start",},
+      { text: "EndTime", value: "end" },
       { text: "Day", value: "day" },
       { text: "Action", value: "actions", sortable: false },
     ],
@@ -149,15 +160,7 @@ export default {
     department: [],
     editedIndex: -1,
     editedItem: {
-      code: "",
-      name: "",
-      section: "",
-      semester: "",
-      department: "",
-      lecturer: "",
-      startTime: "",
-      endTime: "",
-      day: "",
+     
     },
     defaultItem: {
       code: "",
@@ -170,6 +173,7 @@ export default {
       endTime: "",
       day: "",
     },
+    token: sessionStorage.getItem("token"),
   }),
 
   computed: {
@@ -187,25 +191,59 @@ export default {
     },
   },
 
-  created() {
+  async created() {
     this.initialize();
+     await customAxios
+      .get("/admin/departments", {
+        headers: {
+          AUTHORIZATION: "Bearer " + this.token,
+        },
+      })
+      .then((response) => {
+        for (const x of response.data.data) {
+          // let data =  JSON.stringify(x)
+          this.department.push(x);
+        }
+      })
+      .catch((error) => {
+        // handle error
+        console.log(error);
+      });
+       await customAxios
+      .get("/admin/lecturers", {
+        headers: {
+          AUTHORIZATION: "Bearer " + this.token,
+        },
+      })
+      .then((response) => {
+        for (const x of response.data.data) {
+          // let data =  JSON.stringify(x)
+          this.lecturer.push(x);
+        }
+      })
+      .catch((error) => {
+        // handle error
+        console.log(error);
+      });
   },
 
   methods: {
-    initialize() {
-      this.course = [
-        {
-          code: 1022,
-          name: "Web App",
-          section: 3,
-          semester: 4,
-          department: "Computer Science",
-          lecturer: "Andrew",
-          startTime: '13:00',
-          endTime: "17:00",
-          day: "Wednesday",
-        },
-      ];
+    async initialize() {
+     await customAxios
+        .get("/admin/courses", {
+          headers: {
+            AUTHORIZATION: "Bearer " + this.token,
+          },
+        })
+        .then((response) => {
+          console.log(response.data.data)
+          // const data = response.data.data
+          this.course = response.data.data;
+        })
+        .catch((error) => {
+          // handle error
+          console.log(error);
+        });
     },
 
     editItem(item) {
@@ -220,8 +258,23 @@ export default {
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
-      this.course.splice(this.editedIndex, 1);
+    async deleteItemConfirm() {
+      let id = this.editedItem.id
+      await customAxios
+        .delete(`/admin/courses/${id}`,
+        {
+          headers: {
+            AUTHORIZATION:  "Bearer " + this.token,
+          },
+        }).then(() => {
+          this.$toast.success("Successfully deleted :)");
+          this.initialize()
+        })
+        .catch((error) => {
+          // handle error
+          console.log(error);
+          this.$toast.error("Something went wrong :(.")
+        });
       this.closeDelete();
     },
 
@@ -241,11 +294,58 @@ export default {
       });
     },
 
-    save() {
+    async save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.course[this.editedIndex], this.editedItem);
+        const id = this.editedItem.id;
+        const data = {
+          name: this.editedItem.name,
+          code: this.editedItem.code,
+          section: this.editedItem.section,
+          semester: this.editedItem.semester,
+          department: this.editedItem.department.id,
+          lecturer: this.editedItem.lecturer.id,
+          startTime: this.editedItem.start,
+          endTime: this.editedItem.end,
+          day: this.editedItem.day,
+        };
+        await customAxios.put(`/admin/courses/${id}`, data, {
+          headers: {
+            AUTHORIZATION: "Bearer " + this.token,
+          },
+        }).then(() => {
+            this.$toast.success("Successfully created");
+            this.initialize();
+          })
+          .catch((error) => {
+            // handle error
+            this.$toast.error("Something went wrong :(  Make sure time is in format XX:XX");
+            console.log(error);
+          });
       } else {
-        this.course.push(this.editedItem);
+        const data = {
+          name: this.editedItem.name,
+          code: this.editedItem.code,
+          section: this.editedItem.section,
+          semester: this.editedItem.semester,
+          department: this.editedItem.department.id,
+          lecturer: this.editedItem.lecturer.id,
+          startTime: this.editedItem.start,
+          endTime: this.editedItem.end,
+          day: this.editedItem.day,
+        };
+        await customAxios.post("/admin/courses/create", data, {
+          headers: {
+            AUTHORIZATION: "Bearer " + this.token,
+          },
+        }).then(() => {
+            this.$toast.success("Successfully created");
+            this.initialize();
+          })
+          .catch((error) => {
+            // handle error
+            this.$toast.error("Something went wrong :(  Make sure time is in format XX:XX");
+            console.log(error);
+          });
       }
       this.close();
     },

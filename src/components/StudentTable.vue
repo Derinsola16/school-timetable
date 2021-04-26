@@ -4,7 +4,7 @@
     :items="student"
     :search="search"
     sort-by="name"
-    class="elevation-4 text-capitalize"
+    class="elevation-4 text-capitalize letter"
     dark
   >
     <template v-slot:top>

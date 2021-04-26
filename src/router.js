@@ -12,8 +12,9 @@ import Home from './pages/Home'
 import Lecturer from './pages/admin/Lecturer'
 import Student from './pages/admin/Student'
 import Todo from './pages/admin/Todo'
+import Timetable from './pages/admin/Timetable'
 import Department from './pages/admin/Department';
-import Course from './pages/admin//Course';
+import Course from './pages/admin/Course';
 
 Vue.use(VueRouter) 
 
@@ -60,7 +61,12 @@ export default new VueRouter({
                     path: 'todo',
                     name: 'Todo',
                     component: Todo
-                }
+                },
+                {
+                    path: 'timetable',
+                    name: 'Timetable',
+                    component: Timetable
+                },
             ]
         }
     ]

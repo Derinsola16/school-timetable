@@ -4,13 +4,14 @@
     :items="department"
     :search="search"
     sort-by="name"
-    class="elevation-4 mb-15 text-capitalize"
+    class="elevation-4 mb-15 text-capitalize letter"
     dark
   >
     <template v-slot:top>
       <v-toolbar flat color="#eaab00">
         <v-toolbar-title>Create Department</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
+        <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"

@@ -243,6 +243,7 @@ export default {
         })
         .then((response) => {
           this.student = response.data.data;
+          console.log(response.data.data)
         })
         .catch((error) => {
           // handle error

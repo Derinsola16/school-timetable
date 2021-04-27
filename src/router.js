@@ -16,6 +16,14 @@ import Timetable from './pages/admin/Timetable'
 import Department from './pages/admin/Department';
 import Course from './pages/admin/Course';
 
+// Student features
+import StuTodo from './pages/student/Todo'
+import StuTimetable from './pages/student/Timetable'
+
+// Lecturer features
+import LecTodo from './pages/lecturer/Todo'
+import LecTimetable from './pages/lecturer/Timetable'
+
 Vue.use(VueRouter) 
 
 
@@ -66,6 +74,38 @@ export default new VueRouter({
                     path: 'timetable',
                     name: 'Timetable',
                     component: Timetable
+                },
+            ]
+        },
+        {
+            path: "/student",
+            component: DashboardView,
+            children: [
+                {
+                    path: 'todo',
+                    name: 'Todo',
+                    component: StuTodo
+                },
+                {
+                    path: 'timetable',
+                    name: 'Timetable',
+                    component: StuTimetable
+                },
+            ]
+        },
+        {
+            path: "/lecturer",
+            component: DashboardView,
+            children: [
+                {
+                    path: 'todo',
+                    name: 'Todo',
+                    component: LecTodo
+                },
+                {
+                    path: 'timetable',
+                    name: 'Timetable',
+                    component: LecTimetable
                 },
             ]
         }

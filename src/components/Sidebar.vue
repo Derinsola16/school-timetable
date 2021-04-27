@@ -5,7 +5,8 @@
         <img src="../assets/image.png" alt="" class="" width="100" />
       </div>
       <div>
-        <router-link
+       <div v-if="currentPath == '/admin'">
+          <router-link
           to="department"
           class="py-3 text-white d-flex px-4 mb-1 text-decoration-none"
           :class="{
@@ -48,6 +49,7 @@
           <i class="fas fa-book me-3"></i>
           <p class="m-0">Course</p>
         </router-link>
+       </div>
 
         <router-link
           to="todo"
@@ -70,6 +72,14 @@
           <i class="fas fa-list-ul me-3"></i>
           <p class="m-0">Timetable</p>
         </router-link>
+
+        <router-link
+          to="/"
+          class="py-3 text-light d-flex px-4 mb-1 text-decoration-none"
+        >
+          <i class="fas fa-list-ul me-3"></i>
+          <p class="m-0" @click="logout">Log Out</p>
+        </router-link>
         
       </div>
     </div>
@@ -81,13 +91,25 @@ export default {
   components: {},
   data() {
     return {
+      user: JSON.parse(sessionStorage.getItem('user')),
     };
   },
   computed: {
     currentRoute() {
       return this.$route.name;
     },
+    currentPath() {
+      return this.$route.matched[0].path;
+    },
   },
+  methods: {
+    logout() {
+     sessionStorage.removeItem('token')
+    }
+  },
+  mounted(){
+    console.log(this.$route)
+  }
 };
 </script>
 

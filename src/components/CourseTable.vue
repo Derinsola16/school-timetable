@@ -22,7 +22,7 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn  dark class="mb-2" v-bind="attrs" v-on="on">
+            <v-btn dark class="mb-2" v-bind="attrs" v-on="on">
               Create Course
             </v-btn>
           </template>
@@ -58,21 +58,26 @@
                       label="Semester"
                     ></v-text-field>
                   </v-col>
-                 <v-col cols="12" sm="6">
+                  <v-col cols="12" sm="6">
                     <v-select
                       v-model="editedItem.department"
                       :items="department"
                       label="Department"
                       dense
                     ></v-select>
-                 </v-col>
+                  </v-col>
                   <v-col cols="12" sm="6">
-                    <v-select
-                      v-model="editedItem.lecturer"
-                      :items="lecturer"
-                      label="Lecturer"
-                      dense
-                    ></v-select>
+                    <!-- <v-select
+          v-model="select"
+          :hint="`${select.state}, ${select.abbr}`"
+          :items="items"
+          item-text="state"
+          item-value="abbr"
+          label="Select"
+          persistent-hint
+          return-object
+          single-line
+        ></v-select> -->
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
@@ -109,11 +114,17 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="headline"
+              >Are you sure you want to delete this item?</v-card-title
+            >
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+              <v-btn color="blue darken-1" text @click="closeDelete"
+                >Cancel</v-btn
+              >
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                >OK</v-btn
+              >
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -150,7 +161,7 @@ export default {
       { text: "Semester", value: "semester" },
       { text: "Department", value: "department.name" },
       { text: "Lecturer", value: "lecturer.name" },
-      { text: "StartTime", value: "start",},
+      { text: "StartTime", value: "start" },
       { text: "EndTime", value: "end" },
       { text: "Day", value: "day" },
       { text: "Action", value: "actions", sortable: false },
@@ -160,7 +171,15 @@ export default {
     department: [],
     editedIndex: -1,
     editedItem: {
-     
+      code: "",
+      name: "",
+      section: "",
+      semester: "",
+      department: "",
+      lecturer: "",
+      startTime: "",
+      endTime: "",
+      day: "",
     },
     defaultItem: {
       code: "",
@@ -193,7 +212,7 @@ export default {
 
   async created() {
     this.initialize();
-     await customAxios
+    await customAxios
       .get("/admin/departments", {
         headers: {
           AUTHORIZATION: "Bearer " + this.token,
@@ -209,17 +228,15 @@ export default {
         // handle error
         console.log(error);
       });
-       await customAxios
+    await customAxios
       .get("/admin/lecturers", {
         headers: {
           AUTHORIZATION: "Bearer " + this.token,
         },
       })
       .then((response) => {
-        for (const x of response.data.data) {
-          // let data =  JSON.stringify(x)
-          this.lecturer.push(x);
-        }
+        console.log(response.data.data);
+        this.lecturer.push(response.data.data);
       })
       .catch((error) => {
         // handle error
@@ -229,14 +246,14 @@ export default {
 
   methods: {
     async initialize() {
-     await customAxios
+      await customAxios
         .get("/admin/courses", {
           headers: {
             AUTHORIZATION: "Bearer " + this.token,
           },
         })
         .then((response) => {
-          console.log(response.data.data)
+          console.log(response.data.data);
           // const data = response.data.data
           this.course = response.data.data;
         })
@@ -259,21 +276,21 @@ export default {
     },
 
     async deleteItemConfirm() {
-      let id = this.editedItem.id
+      let id = this.editedItem.id;
       await customAxios
-        .delete(`/admin/courses/${id}`,
-        {
+        .delete(`/admin/courses/${id}`, {
           headers: {
-            AUTHORIZATION:  "Bearer " + this.token,
+            AUTHORIZATION: "Bearer " + this.token,
           },
-        }).then(() => {
+        })
+        .then(() => {
           this.$toast.success("Successfully deleted :)");
-          this.initialize()
+          this.initialize();
         })
         .catch((error) => {
           // handle error
           console.log(error);
-          this.$toast.error("Something went wrong :(.")
+          this.$toast.error("Something went wrong :(.");
         });
       this.closeDelete();
     },
@@ -308,17 +325,21 @@ export default {
           endTime: this.editedItem.end,
           day: this.editedItem.day,
         };
-        await customAxios.put(`/admin/courses/${id}`, data, {
-          headers: {
-            AUTHORIZATION: "Bearer " + this.token,
-          },
-        }).then(() => {
+        await customAxios
+          .put(`/admin/courses/${id}`, data, {
+            headers: {
+              AUTHORIZATION: "Bearer " + this.token,
+            },
+          })
+          .then(() => {
             this.$toast.success("Successfully created");
             this.initialize();
           })
           .catch((error) => {
             // handle error
-            this.$toast.error("Something went wrong :(  Make sure time is in format XX:XX");
+            this.$toast.error(
+              "Something went wrong :(  Make sure time is in format XX:XX"
+            );
             console.log(error);
           });
       } else {
@@ -333,17 +354,21 @@ export default {
           endTime: this.editedItem.end,
           day: this.editedItem.day,
         };
-        await customAxios.post("/admin/courses/create", data, {
-          headers: {
-            AUTHORIZATION: "Bearer " + this.token,
-          },
-        }).then(() => {
+        await customAxios
+          .post("/admin/courses/create", data, {
+            headers: {
+              AUTHORIZATION: "Bearer " + this.token,
+            },
+          })
+          .then(() => {
             this.$toast.success("Successfully created");
             this.initialize();
           })
           .catch((error) => {
             // handle error
-            this.$toast.error("Something went wrong :(  Make sure time is in format XX:XX");
+            this.$toast.error(
+              "Something went wrong :(  Make sure time is in format XX:XX"
+            );
             console.log(error);
           });
       }

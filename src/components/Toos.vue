@@ -38,11 +38,11 @@
           class=" bg-dark text-white rounded rounded-3"
         >
           <li
+          @click="check"
             class="d-flex justify-content-between rounded rounded-3 mb-2 border-3 border-top border-start border-end border-bottom border-warning"
-            @click="check"
           >
             <!-- @click="checked(item)" -->
-            <div class="">
+            <div>
               <h2>{{ item.title }}</h2>
               <p class="text-break">{{ item.description }}</p>
             </div>
@@ -96,29 +96,6 @@ export default {
     this.initialize();
   },
   methods: {
-    // async checked(item) {
-    //   this.editedIndex = this.todos.indexOf(item);
-    //   this.editedItem = Object.assign({}, item);
-    //   let id = this.editedItem.id;
-    //   await customAxios
-    //     .post(`/todos/${id}/toggledone`, {
-    //       headers: {
-    //         Authorization: "Bearer " + this.token,
-    //       },
-    //     })
-    //     .then((res) => {
-    //       console.log(res);
-    //     })
-    //     .catch((error) => {
-    //       // handle error
-    //       this.$toast.error("Your todo could not be completed :(");
-    //       console.log(error);
-    //     });
-    //   this.$nextTick(() => {
-    //     this.editedItem = Object.assign({}, this.defaultItem);
-    //     this.editedIndex = -1;
-    //   });
-    // },
     check(ev) {
       if (ev.target.tagName === "LI") {
         ev.target.classList.toggle("checked");
@@ -145,6 +122,13 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
+      closeDelete() {
+      this.dialogDelete = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
     async deleteItemConfirm() {
       let id = this.editedItem.id;
       await customAxios
@@ -155,7 +139,7 @@ export default {
         })
         .then(() => {
           this.$toast.success("Successfully deleted :)");
-          this.initialize();
+          // this.initialize();
         })
         .catch((error) => {
           // handle error
@@ -163,13 +147,6 @@ export default {
           this.$toast.error("Something went wrong :(");
         });
       this.closeDelete();
-    },
-    closeDelete() {
-      this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
     },
 
     async createTodo() {

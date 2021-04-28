@@ -17,12 +17,12 @@ import Department from './pages/admin/Department';
 import Course from './pages/admin/Course';
 
 // Student features
-import StuTodo from './pages/student/Todo'
-import StuTimetable from './pages/student/Timetable'
+import StuTodo from './pages/student/studentTodo'
+import StuTimetable from './pages/student/studentTimetable'
 
 // Lecturer features
-import LecTodo from './pages/lecturer/Todo'
-import LecTimetable from './pages/lecturer/Timetable'
+import LecTodo from './pages/lecturer/lecturerTodo'
+import LecTimetable from './pages/lecturer/lecturerTimetable'
 
 Vue.use(VueRouter) 
 

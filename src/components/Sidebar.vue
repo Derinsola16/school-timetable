@@ -108,9 +108,6 @@ export default {
      sessionStorage.removeItem('user')
     }
   },
-  mounted(){
-    console.log(this.$route)
-  }
 };
 </script>
 

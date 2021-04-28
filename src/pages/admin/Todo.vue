@@ -1,14 +1,14 @@
 <template>
   <main class="py-5 px-4">
-   <todo />
+   <toos />
   </main>
 </template>
 
 <script>
-import Todo from '../../components/Todo.vue';
+import Toos from '../../components/Toos';
 export default {
   name: "Todo",
-  components: {Todo},
+  components: {Toos},
   data() {
     return {};
   },

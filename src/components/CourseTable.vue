@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="course"
+    :items="courses"
     :search="search"
     sort-by="name"
     class="elevation-4 mb-15 text-capitalize letter"
@@ -37,64 +37,72 @@
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.name"
-                      label="Course Name"
+                      label="Name"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.code"
-                      label="CourseCode"
+                      label="Code"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.section"
                       label="Section"
+                      hint="Year or Level"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.semester"
                       label="Semester"
+                      hint="1 or 2"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-select
                       v-model="editedItem.department"
-                      :items="department"
+                      :items="departments"
+                      item-text="name"
+                      item-value="id"
                       label="Department"
+                      persistent-hint
+                      return-object
+                      single-line
                       dense
                     ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <!-- <v-select
-          v-model="select"
-          :hint="`${select.state}, ${select.abbr}`"
-          :items="items"
-          item-text="state"
-          item-value="abbr"
-          label="Select"
-          persistent-hint
-          return-object
-          single-line
-        ></v-select> -->
+                    <v-select
+                      v-model="editedItem.lecturer"
+                      :items="lecturers"
+                      item-text="name"
+                      item-value="id"
+                      label="lecturer"
+                      dense
+                      return-object
+                    ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.start"
                       label="StartTime"
+                      hint="Time is 24hrs format eg: 13:30"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.end"
                       label="EndTime"
+                      hint="Time is 24hrs format eg: 17:30"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
                       v-model="editedItem.day"
                       label="Day"
+                      hint="Between Monday - Sunday"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -157,7 +165,7 @@ export default {
     headers: [
       { text: "Name", value: "name", align: "start" },
       { text: "Code", value: "code" },
-      { text: "Section", value: "section" },
+      { text: "Year", value: "section" },
       { text: "Semester", value: "semester" },
       { text: "Department", value: "department.name" },
       { text: "Lecturer", value: "lecturer.name" },
@@ -166,9 +174,9 @@ export default {
       { text: "Day", value: "day" },
       { text: "Action", value: "actions", sortable: false },
     ],
-    course: [],
-    lecturer: [],
-    department: [],
+    courses: [],
+    lecturers: [],
+    departments: [],
     editedIndex: -1,
     editedItem: {
       code: "",
@@ -219,10 +227,7 @@ export default {
         },
       })
       .then((response) => {
-        for (const x of response.data.data) {
-          // let data =  JSON.stringify(x)
-          this.department.push(x);
-        }
+        this.departments = response.data.data;
       })
       .catch((error) => {
         // handle error
@@ -235,8 +240,7 @@ export default {
         },
       })
       .then((response) => {
-        console.log(response.data.data);
-        this.lecturer.push(response.data.data);
+        this.lecturers = response.data.data;
       })
       .catch((error) => {
         // handle error
@@ -253,9 +257,7 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data.data);
-          // const data = response.data.data
-          this.course = response.data.data;
+          this.courses = response.data.data;
         })
         .catch((error) => {
           // handle error
@@ -264,13 +266,13 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.course.indexOf(item);
+      this.editedIndex = this.courses.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.course.indexOf(item);
+      this.editedIndex = this.courses.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },

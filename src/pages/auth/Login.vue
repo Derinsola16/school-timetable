@@ -94,7 +94,7 @@ export default {
           this.$router.push("/admin/department");
           break;
         case 'lecturer':
-          this.$router.push('/lecturer');
+          this.$router.push('/lecturer/timetable');
           break;
         case 'student':
           this.$router.push('/student/timetable');

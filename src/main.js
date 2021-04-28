@@ -9,6 +9,8 @@ import vuetify from './plugins/vuetify';
 import store from './store';
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import PortalVue from "portal-vue";
+
 
 axios.defaults.withCredentials = true
 window.axios = axios
@@ -17,6 +19,7 @@ Vue.use(VueToast, {
   // One of the options
   position: 'top-right'
 })
+Vue.use(PortalVue);
 
 new Vue({
   router,

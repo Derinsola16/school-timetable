@@ -34,7 +34,7 @@ export default {
         from: "2021-04-26T09:00",
         to: "2021-04-26T11:00",
         data: {
-          title: "Web App",
+          title: "App",
           description: "Steven Camilleri",
         },
       },

@@ -343,8 +343,7 @@ export default {
               AUTHORIZATION: "Bearer " + this.token,
             },
           })
-          .then((res) => {
-            console.log(res);
+          .then(() => {
             this.$toast.success("Successfully created");
             this.initialize();
           })

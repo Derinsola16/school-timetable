@@ -20,7 +20,7 @@
               type="email"
               class="form-control"
               id="exampleFormControlInput1"
-              placeholder="Use this mock mail 'user@gmail.com'"
+              placeholder="Enter email"
               required
             />
           </div>
@@ -35,6 +35,7 @@
               type="password"
               class="form-control"
               id="exampleFormControlInput1"
+              placeholder="Enter password"
               required
             />
           </div>

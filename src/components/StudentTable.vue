@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="student"
+    :items="students"
     :search="search"
     sort-by="name"
     class="elevation-4 text-capitalize letter"
@@ -23,7 +23,7 @@
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn dark class="mb-2" v-bind="attrs" v-on="on">
-              New Item
+              Create Student
             </v-btn>
           </template>
 
@@ -88,11 +88,16 @@
                       label="StudentNumber"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6">
+                   <v-col cols="12" sm="6">
                     <v-select
                       v-model="editedItem.department"
-                      :items="department"
+                      :items="departments"
+                      item-text="name"
+                      item-value="id"
                       label="Department"
+                      persistent-hint
+                      return-object
+                      single-line
                       dense
                     ></v-select>
                   </v-col>
@@ -175,9 +180,8 @@ export default {
       { text: "Department", value: "department.name" },
       { text: "Action", value: "actions", sortable: false },
     ],
-    department: [],
-    depat: [],
-    student: [],
+    departments: [],
+    students: [],
     editedIndex: -1,
     editedItem: {
       name: "",
@@ -222,10 +226,7 @@ export default {
         },
       })
       .then((response) => {
-        for (const x of response.data.data) {
-          // let data =  JSON.stringify(x)
-          this.department.push(x);
-        }
+        this.departments = response.data.data;
       })
       .catch((error) => {
         // handle error
@@ -242,7 +243,7 @@ export default {
           },
         })
         .then((response) => {
-          this.student = response.data.data;
+          this.students = response.data.data;
         })
         .catch((error) => {
           // handle error
@@ -251,13 +252,13 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.student.indexOf(item);
+      this.editedIndex = this.students.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.student.indexOf(item);
+      this.editedIndex = this.students.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },

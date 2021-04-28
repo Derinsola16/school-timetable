@@ -186,7 +186,7 @@ export default {
               AUTHORIZATION: "Bearer " + this.token,
             },
           })
-          .then((res) => {
+          .then(() => {
             this.$toast.success("Successfully created");
             this.initialize();
             this.$router.go();

@@ -139,7 +139,7 @@ export default {
         })
         .then(() => {
           this.$toast.success("Successfully deleted :)");
-          // this.initialize();
+          this.initialize();
         })
         .catch((error) => {
           // handle error

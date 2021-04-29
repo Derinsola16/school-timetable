@@ -1,59 +1,42 @@
 <template>
-  <v-container>
-    <kalendar :configuration="calendar_settings" :events="events">
-      <!-- CREATED CARD SLOT -->
-      <div
-        slot="created-card"
-        slot-scope="{ event_information }"
-        class="details-card"
-      >
-        <h4 class="appointment-title">{{ event_information.data.title }}</h4>
-        <small class=" mb-5">
-          {{ event_information.data.description }}
-        </small>
-        <v-spacer></v-spacer>
-        <span class="time mt-5"
-          >{{ event_information.start_time | formatToHours }} -
-          {{ event_information.end_time | formatToHours }}</span
-        >
-      </div>
-    </kalendar>
-  </v-container>
+	<v-container>
+		<FullCalendar :options="calendarOptions" />
+	</v-container>
 </template>
 
 <script>
-import { Kalendar } from "kalendar-vue";
+import FullCalendar from "@fullcalendar/vue";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import timeGridPlugin from "@fullcalendar/timegrid";
 
 export default {
-  components: {
-    Kalendar,
-  },
-  data: () => ({
-    events: [
-      {
-        from: "2021-04-26T09:00",
-        to: "2021-04-26T11:00",
-        data: {
-          title: "Web",
-          description: "Steven Camilleri",
-        },
-      },
-    ],
-    calendar_settings: {
-      style: "material_design",
-      cell_height: 10,
-      scrollToNow: true,
-      start_day: new Date().toISOString(),
-      read_only: true,
-      day_starts_at: 0,
-      day_ends_at: 24,
-      overlap: true,
-      past_event_creation: true,
-      view_type: "week"
-    },
-  }),
+	components: {
+		FullCalendar,
+	},
+	data: () => ({
+		calendarOptions: {
+			plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
+			initialView: "timeGridWeek",
+			events: [
+				{
+					title: 'Computer Science',
+					daysOfWeek: ["4"],
+					startTime: "14:45",
+					endTime: "18:45",
+				},
+				{
+					daysOfWeek: ["3"], // these recurrent events move separately
+					title: 'Chemistry',
+					startTime: "11:00",
+					endTime: "11:30",
+				},
+			],
+			editable: false,
+		},
+	}),
 
-  methods: {},
+	methods: {},
 };
 </script>
 

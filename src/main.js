@@ -10,7 +10,11 @@ import store from './store';
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import PortalVue from "portal-vue";
+import DaySpanVuetify from 'dayspan-vuetify'
 
+import 'vuetify/dist/vuetify.min.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css'
 
 axios.defaults.withCredentials = true
 window.axios = axios
@@ -20,6 +24,12 @@ Vue.use(VueToast, {
   position: 'top-right'
 })
 Vue.use(PortalVue);
+Vue.use(DaySpanVuetify, {
+  methods: {
+    getDefaultEventColor: () => '#1976d2'
+  }
+});
+
 
 new Vue({
   router,

@@ -300,6 +300,11 @@ export default {
     },
 
     async save() {
+        if(this.editedItem.name === '' || this.editedItem.email === '' || this.editItem.password === ''
+       || this.editedItem.semester === '' || this.editedItem.department === '' || this.editItem.phone === ''
+       || this.editedItem.studentNumber === '' || this.editedItem.section === ''){
+        this.$toast.error("All fields must be filled :(")
+      }else{
       if (this.editedIndex > -1) {
         const id = this.editedItem.id;
         const data = {
@@ -355,6 +360,7 @@ export default {
           });
       }
       this.close();
+      }
     },
   },
 };

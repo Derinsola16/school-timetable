@@ -314,7 +314,12 @@ export default {
     },
 
     async save() {
-      if (this.editedIndex > -1) {
+      if(this.editedItem.name === '' || this.editedItem.code === '' || this.editItem.section === ''
+       || this.editedItem.semester === '' || this.editedItem.department === '' || this.editItem.lecturer === ''
+       || this.editedItem.startTime === '' || this.editedItem.endTime === '' || this.editItem.day === ''){
+        this.$toast.error("All fields must be filled :(")
+      }else {
+        if (this.editedIndex > -1) {
         const id = this.editedItem.id;
         const data = {
           name: this.editedItem.name,
@@ -375,6 +380,7 @@ export default {
           });
       }
       this.close();
+      }
     },
   },
 };

@@ -1,121 +1,115 @@
 <template>
-  <!-- <vue-cal
-    :selected-date="new Date()"
-    events-count-on-year-view
-    show-all-day-events
-    :events="events"
-  >
-  </vue-cal> -->
-  <vue-cal 
-         :selected-date="new Date()"
-         :time-from="8 * 60"
-         :time-to="23 * 60"
-         :disable-views="['years', 'year']"
-         
-         resize-x
-         :events="events">
-</vue-cal>
+  <v-container>
+    <FullCalendar :options="calendarOptions" />
+  </v-container>
 </template>
+
 <script>
-import VueCal from "vue-cal";
-import "vue-cal/dist/vuecal.css";
+import FullCalendar from "@fullcalendar/vue";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import customAxios from "../../helpers/axios";
 
 export default {
-  components: { VueCal },
+  components: {
+    FullCalendar,
+  },
   data: () => ({
-      events: [
-    {
-      start: '2021-04-20 10:00',
-      end: '2021-04-29 12:37',
-      title: 'Running Marathon',
-      content: '<i class="v-icon material-icons">directions_run</i>',
-      class: 'sport'
+    token: sessionStorage.getItem("token"),
+    calendarOptions: {
+      plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
+      initialView: "timeGridWeek",
+      events: [],
+      editable: false,
     },
-    {
-      start: '2021-04-25 10:00',
-      end: '2021-04-29 10:25',
-      title: 'Drink water!',
-      content: '<i class="v-icon material-icons">local_drink</i>',
-      class: 'health'
-    },
-    {
-      start: '2021-04-21 19:00',
-      end: '2021-04-23 11:30',
-      title: 'Trip to India',
-      content: '<i class="v-icon material-icons">flight</i>',
-      class: 'leisure'
-    }
-  ]
-    // events: [
-    //   {
-    //     start: "09:00",
-    //     end: "13:00",
-    //     title: "Nightclub",
-    //     content: '<i class="v-icon material-icons">local_drink</i>',
-    //     class: "leisure",
-    //     repeat: {
-    //       weekdays: [5], // You can repeat on multiple days of the week.   editable-events  :time-from="8 * 60" :time-to="23 * 60"   hide-weekends
-    //       until: "2021-11-30", // Don't need a time here as it will take the same as original event date.
-    //     },
-    //   },
-      // {
-      //   start: "2021-04-23", // You can put time or not, will be discarded if all-day.
-      //   end: "2021-04-23",
-      //   title: "Pizza day!",
-      //   content: '<i class="v-icon material-icons">local_pizza</i>',
-      //   class: "pink-event",
-      //   allDay: true,
-      //   repeat: {
-      //     weekdays: [5], // If original event day is not in these days, original event will still show up.
-      //     // Without `until` property, it will go on forever.
-      //   },
-      // },
-      // {
-      //   start: "2021-04-22 10:00",
-      //   end: "2021-04-22 12:00",
-      //   title: "Piano lesson",
-      //   content: '<i class="v-icon material-icons">queue_music</i>',
-      //   class: "leisure",
-      //   repeat: {
-      //     every: "week",
-      //     until: new Date(), // You can also use a Javascript Date.
-      //   },
-      // },
-      // {
-      //   start: "2021-04-20 18:00",
-      //   end: "2021-04-29 20:00",
-      //   title: "Tennis tournament",
-      //   content: '<i class="v-icon material-icons">sports_tennis</i>',
-      //   class: "sport",
-      //   repeat: {
-      //     every: 14,
-      //     until: "2019-01-20",
-      //   },
-      // },
-      // {
-      //   start: "2021-04-01",
-      //   end: "2021-04-01",
-      //   title: "Crêpes day",
-      //   content: '<i class="v-icon material-icons">restaurant</i>',
-      //   class: "yellow-event",
-      //   allDay: true,
-      //   repeat: {
-      //     every: "month",
-      //     until: "2019-12-26",
-      //   },
-      // },
-      // {
-      //   start: "2015-06-15",
-      //   end: "2015-06-15",
-      //   title: "My Birthday",
-      //   content: '<i class="v-icon material-icons">cake</i><br>I am 4.',
-      //   class: "blue-event",
-      //   allDay: true,
-      //   repeat: {
-      //     every: "year",
-      //   },
-      // },
-    // ],
   }),
+  async created() {
+    await customAxios
+      .get("/admin/courses", {
+        headers: {
+          AUTHORIZATION: "Bearer " + this.token,
+        },
+      })
+      .then((response) => {
+        
+        for(const x of response.data.data){
+          const data = {
+          title: x.name,
+          startTime: x.start,
+          endTime: x.end,
+          daysOfWeek: []
+        }
+        const days = {
+          sunday: "0",
+          monday: "1",
+          tuesday: "2",
+          wednesday: "3",
+          thursday: "4",
+          friday: "5",
+          saturday: "6"
+        }
+        data.daysOfWeek.push(days[x.day])
+        this.calendarOptions.events.push(data)
+        console.log(data);
+        }
+        
+        console.log(response.data.data);
+      })
+      .catch((error) => {
+        // handle error
+        console.log(error);
+      });
+      console.log(this.calendarOptions.events)
+  },
+  methods: {},
 };
 </script>
+
+<style lang="scss">
+$green: #00f0b5;
+$red: #f61067;
+.details-card {
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  height: 100%;
+  button {
+    margin: 0;
+    border: none;
+    color: #4c4b4b;
+    position: absolute;
+    padding-right: 0px;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    background: transparent;
+    svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+  }
+  .remove {
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  &:hover .remove {
+    opacity: 1;
+  }
+}
+.popup-event .buttons {
+  display: flex;
+  justify-content: space-between;
+}
+.popup-event .buttons button {
+  border: none;
+  color: #29771c;
+  background-color: rgba($green, 0.04);
+  padding: 5px 10px;
+  &.cancel {
+    background-color: rgba($red, 0.04);
+    color: $red;
+  }
+}
+</style>

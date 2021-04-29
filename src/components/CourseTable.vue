@@ -314,72 +314,79 @@ export default {
     },
 
     async save() {
-      if(this.editedItem.name === '' || this.editedItem.code === '' || this.editItem.section === ''
-       || this.editedItem.semester === '' || this.editedItem.department === '' || this.editItem.lecturer === ''
-       || this.editedItem.startTime === '' || this.editedItem.endTime === '' || this.editItem.day === ''){
-        this.$toast.error("All fields must be filled :(")
-      }else {
-        if (this.editedIndex > -1) {
-        const id = this.editedItem.id;
-        const data = {
-          name: this.editedItem.name,
-          code: this.editedItem.code,
-          section: this.editedItem.section,
-          semester: this.editedItem.semester,
-          department: this.editedItem.department.id,
-          lecturer: this.editedItem.lecturer.id,
-          startTime: this.editedItem.start,
-          endTime: this.editedItem.end,
-          day: this.editedItem.day,
-        };
-        await customAxios
-          .put(`/admin/courses/${id}`, data, {
-            headers: {
-              AUTHORIZATION: "Bearer " + this.token,
-            },
-          })
-          .then(() => {
-            this.$toast.success("Successfully created");
-            this.initialize();
-          })
-          .catch((error) => {
-            // handle error
-            this.$toast.error(
-              "Something went wrong :(  Make sure time is in format XX:XX"
-            );
-            console.log(error);
-          });
+      if (
+        this.editedItem.name === "" ||
+        this.editedItem.code === "" ||
+        this.editItem.section === "" ||
+        this.editedItem.semester === "" ||
+        this.editedItem.department === "" ||
+        this.editedItem.start === "" ||
+        this.editedItem.end === "" ||
+        this.editItem.day === ""
+      ) {
+        this.$toast.error("All fields must be filled :(");
       } else {
-        const data = {
-          name: this.editedItem.name,
-          code: this.editedItem.code,
-          section: this.editedItem.section,
-          semester: this.editedItem.semester,
-          department: this.editedItem.department.id,
-          lecturer: this.editedItem.lecturer.id,
-          startTime: this.editedItem.start,
-          endTime: this.editedItem.end,
-          day: this.editedItem.day,
-        };
-        await customAxios
-          .post("/admin/courses/create", data, {
-            headers: {
-              AUTHORIZATION: "Bearer " + this.token,
-            },
-          })
-          .then(() => {
-            this.$toast.success("Successfully created");
-            this.initialize();
-          })
-          .catch((error) => {
-            // handle error
-            this.$toast.error(
-              "Something went wrong :(  Make sure time is in format XX:XX"
-            );
-            console.log(error);
-          });
-      }
-      this.close();
+        if (this.editedIndex > -1) {
+          const id = this.editedItem.id;
+          const data = {
+            name: this.editedItem.name,
+            code: this.editedItem.code,
+            section: this.editedItem.section,
+            semester: this.editedItem.semester,
+            department: this.editedItem.department.id,
+            lecturer: this.editedItem.lecturer.id,
+            startTime: this.editedItem.start,
+            endTime: this.editedItem.end,
+            day: this.editedItem.day,
+          };
+          await customAxios
+            .put(`/admin/courses/${id}`, data, {
+              headers: {
+                AUTHORIZATION: "Bearer " + this.token,
+              },
+            })
+            .then(() => {
+              this.$toast.success("Successfully created");
+              this.initialize();
+            })
+            .catch((error) => {
+              // handle error
+              this.$toast.error(
+                "Something went wrong :(  Make sure time is in format XX:XX"
+              );
+              console.log(error);
+            });
+        } else {
+          const data = {
+            name: this.editedItem.name,
+            code: this.editedItem.code,
+            section: this.editedItem.section,
+            semester: this.editedItem.semester,
+            department: this.editedItem.department.id,
+            lecturer: this.editedItem.lecturer.id,
+            startTime: this.editedItem.start,
+            endTime: this.editedItem.end,
+            day: this.editedItem.day,
+          };
+          await customAxios
+            .post("/admin/courses/create", data, {
+              headers: {
+                AUTHORIZATION: "Bearer " + this.token,
+              },
+            })
+            .then(() => {
+              this.$toast.success("Successfully created");
+              this.initialize();
+            })
+            .catch((error) => {
+              // handle error
+              this.$toast.error(
+                "Something went wrong :(  Make sure time is in format XX:XX"
+              );
+              console.log(error);
+            });
+        }
+        this.close();
       }
     },
   },

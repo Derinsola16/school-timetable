@@ -1,58 +1,67 @@
 <template>
   <v-container>
-    <kalendar :configuration="calendar_settings" :events="events">
-      <!-- CREATED CARD SLOT -->
-      <div
-        slot="created-card"
-        slot-scope="{ event_information }"
-        class="details-card"
-      >
-        <h4 class="appointment-title">{{ event_information.data.title }}</h4>
-        <small class=" mb-5">
-          {{ event_information.data.description }}
-        </small>
-        <v-spacer></v-spacer>
-        <span class="time mt-5"
-          >{{ event_information.start_time | formatToHours }} -
-          {{ event_information.end_time | formatToHours }}</span
-        >
-      </div>
-    </kalendar>
+    <FullCalendar :options="calendarOptions" />
   </v-container>
 </template>
 
 <script>
-import { Kalendar } from "kalendar-vue";
+import FullCalendar from "@fullcalendar/vue";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import customAxios from "../../helpers/axios";
 
 export default {
   components: {
-    Kalendar,
+    FullCalendar,
   },
   data: () => ({
-    events: [
-      {
-        from: "2021-04-26T09:00",
-        to: "2021-04-26T11:00",
-        data: {
-          title: "App",
-          description: "Steven Camilleri",
-        },
-      },
-    ],
-    calendar_settings: {
-      style: "material_design",
-      cell_height: 10,
-      scrollToNow: true,
-      start_day: new Date().toISOString(),
-      read_only: true,
-      day_starts_at: 0,
-      day_ends_at: 24,
-      overlap: true,
-      past_event_creation: true,
-      view_type: "week"
+    token: sessionStorage.getItem("token"),
+    calendarOptions: {
+      plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
+      initialView: "timeGridWeek",
+      events: [],
+      editable: false,
     },
   }),
-
+  async created() {
+    await customAxios
+      .get("/lecturer/courses", {
+        headers: {
+          AUTHORIZATION: "Bearer " + this.token,
+        },
+      })
+      .then((response) => {
+        
+        for(const x of response.data.data){
+          const data = {
+          title: x.name,
+          startTime: x.start,
+          endTime: x.end,
+          daysOfWeek: []
+        }
+        const days = {
+          sunday: "0",
+          monday: "1",
+          tuesday: "2",
+          wednesday: "3",
+          thursday: "4",
+          friday: "5",
+          saturday: "6"
+        }
+        data.daysOfWeek.push(days[x.day])
+        this.calendarOptions.events.push(data)
+        console.log(data);
+        }
+        
+        console.log(response.data.data);
+      })
+      .catch((error) => {
+        // handle error
+        console.log(error);
+      });
+      console.log(this.calendarOptions.events)
+  },
   methods: {},
 };
 </script>
@@ -61,46 +70,46 @@ export default {
 $green: #00f0b5;
 $red: #f61067;
 .details-card {
-	display: flex;
-	flex-direction: column;
-	width: 100px;
-	height: 100%;
-	button {
-		margin: 0;
-		border: none;
-		color: #4c4b4b;
-		position: absolute;
-		padding-right: 0px;
-		top: 5px;
-		right: 5px;
-		cursor: pointer;
-		background: transparent;
-		svg {
-			width: 18px;
-			height: 18px;
-			fill: white;
-		}
-	}
-	.remove {
-		opacity: 0;
-		transition: opacity 0.15s;
-	}
-	&:hover .remove {
-		opacity: 1;
-	}
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  height: 100%;
+  button {
+    margin: 0;
+    border: none;
+    color: #4c4b4b;
+    position: absolute;
+    padding-right: 0px;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    background: transparent;
+    svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+  }
+  .remove {
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  &:hover .remove {
+    opacity: 1;
+  }
 }
 .popup-event .buttons {
-	display: flex;
-	justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 .popup-event .buttons button {
-	border: none;
-	color: #29771c;
-	background-color: rgba($green, 0.04);
-	padding: 5px 10px;
-	&.cancel {
-		background-color: rgba($red, 0.04);
-		color: $red;
-	}
+  border: none;
+  color: #29771c;
+  background-color: rgba($green, 0.04);
+  padding: 5px 10px;
+  &.cancel {
+    background-color: rgba($red, 0.04);
+    color: $red;
+  }
 }
 </style>

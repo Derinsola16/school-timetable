@@ -166,7 +166,9 @@ export default {
           .then(() => {
             this.$toast.success("Successfully created");
             this.initialize();
-            this.$router.go();
+            this.editedItem.title = ''
+            this.editedItem.description = ''
+
           })
           .catch((error) => {
             // handle error

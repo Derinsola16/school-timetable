@@ -24,8 +24,8 @@
             </v-row>
           </v-container>
         </v-card-text>
-        <v-btn elevation="2" raised class="mt-5" @click="createTodo"
-          >Add Item</v-btn
+        <v-btn elevation="2" raised class="mt-16" @click="createTodo"
+          >Add Todo</v-btn
         >
       </div>
 
